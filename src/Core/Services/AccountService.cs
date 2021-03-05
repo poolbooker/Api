@@ -63,10 +63,10 @@ namespace Pb.Api.Services
             var refreshToken = GenerateRefreshToken(ipAddress);
             account.RefreshTokens.Add(refreshToken);
 
-            // remove old refresh tokens from account
+            // Remove old refresh tokens from account
             RemoveOldRefreshTokens(account);
 
-            // save changes to db
+            // Save changes to db
             _context.Update(account);
             _context.SaveChanges();
 
@@ -80,7 +80,7 @@ namespace Pb.Api.Services
         {
             var (refreshToken, account) = GetRefreshToken(token);
 
-            // replace old refresh token with a new one and save
+            // Replace old refresh token with a new one and save
             var newRefreshToken = GenerateRefreshToken(ipAddress);
             refreshToken.Revoked = DateTime.UtcNow;
             refreshToken.RevokedByIp = ipAddress;
@@ -92,7 +92,7 @@ namespace Pb.Api.Services
             _context.Update(account);
             _context.SaveChanges();
 
-            // generate new jwt
+            // Generate new jwt
             var jwtToken = GenerateJwtToken(account);
 
             var response = _mapper.Map<AuthenticateResponse>(account);
@@ -105,7 +105,7 @@ namespace Pb.Api.Services
         {
             var (refreshToken, account) = GetRefreshToken(token);
 
-            // revoke token and save
+            // Revoke token and save
             refreshToken.Revoked = DateTime.UtcNow;
             refreshToken.RevokedByIp = ipAddress;
             _context.Update(account);
@@ -114,31 +114,25 @@ namespace Pb.Api.Services
 
         public bool Register(RegisterRequest model, string origin)
         {
-            // validate
             if (_context.Accounts.Any(x => x.Email == model.Email))
-            {
-                // send already registered error in email to prevent account enumeration
-                //sendAlreadyRegisteredEmail(model.Email, origin);
                 return false;
-            }
 
-            // map model to new account object
             var account = _mapper.Map<Account>(model);
 
-            // first registered account is an admin
+            // First registered account is an admin
             var isFirstAccount = _context.Accounts.Count() == 0;
             account.Role = isFirstAccount ? Role.Admin : Role.User;
             account.Created = DateTime.UtcNow;
             account.VerificationToken = RandomTokenString();
 
-            // hash password
+            // Hash password
             account.PwdHash = BC.HashPassword(model.Password);
 
-            // save account
+            // Save account
             _context.Accounts.Add(account);
             _context.SaveChanges();
 
-            // send email
+            // Send verification email
             SendVerificationEmail(account, origin);
             return true;
         }
@@ -160,17 +154,18 @@ namespace Pb.Api.Services
         {
             var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
 
-            // always return ok response to prevent email enumeration
-            if (account == null) return;
+            // Always return ok response to prevent email enumeration
+            if (account == null)
+                return;
 
-            // create reset token that expires after 1 day
+            // Create reset token that expires after 1 day
             account.ResetToken = RandomTokenString();
             account.ResetTokenExpires = DateTime.UtcNow.AddDays(1);
 
             _context.Accounts.Update(account);
             _context.SaveChanges();
 
-            // send email
+            // Send email
             SendPasswordResetEmail(account, origin);
         }
 
@@ -193,7 +188,7 @@ namespace Pb.Api.Services
             if (account == null)
                 throw new AppException("Invalid token");
 
-            // update password and remove reset token
+            // Update password and remove reset token
             account.PwdHash = BC.HashPassword(model.Password);
             account.PwdReset = DateTime.UtcNow;
             account.ResetToken = null;
@@ -217,19 +212,17 @@ namespace Pb.Api.Services
 
         public AccountResponse Create(CreateRequest model)
         {
-            // validate
             if (_context.Accounts.Any(x => x.Email == model.Email))
                 throw new AppException($"Email '{model.Email}' is already registered");
 
-            // map model to new account object
             var account = _mapper.Map<Account>(model);
             account.Created = DateTime.UtcNow;
             account.Verified = DateTime.UtcNow;
 
-            // hash password
+            // Hash password
             account.PwdHash = BC.HashPassword(model.Password);
 
-            // save account
+            // Save account
             _context.Accounts.Add(account);
             _context.SaveChanges();
 
@@ -240,15 +233,14 @@ namespace Pb.Api.Services
         {
             var account = GetAccount(id);
 
-            // validate
             if (account.Email != model.Email && _context.Accounts.Any(x => x.Email == model.Email))
                 throw new AppException($"Email '{model.Email}' is already taken");
 
-            // hash password if it was entered
+            // Hash password if it was entered
             if (!string.IsNullOrEmpty(model.Password))
                 account.PwdHash = BC.HashPassword(model.Password);
 
-            // copy model to account and save
+            // Copy model to account and save
             _mapper.Map(model, account);
             account.Updated = DateTime.UtcNow;
             _context.Accounts.Update(account);
@@ -264,21 +256,22 @@ namespace Pb.Api.Services
             _context.SaveChanges();
         }
 
-        // helper methods
-
         private Account GetAccount(int id)
         {
             var account = _context.Accounts.Find(id);
-            if (account == null) throw new KeyNotFoundException("Account not found");
+            if (account == null)
+                throw new KeyNotFoundException("Account not found");
             return account;
         }
 
         private (RefreshToken, Account) GetRefreshToken(string token)
         {
             var account = _context.Accounts.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
-            if (account == null) throw new AppException("Invalid token");
+            if (account == null)
+                throw new AppException("Invalid token");
             var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
-            if (!refreshToken.IsActive) throw new AppException("Invalid token");
+            if (!refreshToken.IsActive)
+                throw new AppException("Invalid token");
             return (refreshToken, account);
         }
 
@@ -319,7 +312,8 @@ namespace Pb.Api.Services
             using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
             var randomBytes = new byte[40];
             rngCryptoServiceProvider.GetBytes(randomBytes);
-            // convert random bytes to hex string
+            
+            // Convert random bytes to hex string
             return BitConverter.ToString(randomBytes).Replace("-", "");
         }
 
@@ -334,13 +328,13 @@ namespace Pb.Api.Services
             }
             else
             {
-                message = $@"<p>Merci d'utiliser les jeton suivant pour vérifier votre adresse email address avec le <code>/accounts/verify-email</code> api route:</p>
+                message = $@"<p>Merci d'utiliser le jeton suivant pour vérifier votre adresse email address avec le <code>/accounts/verify-email</code> api route:</p>
                              <p><code>{account.VerificationToken}</code></p>";
             }
 
             _emailService.Send(
                 to: account.Email,
-                subject: "Sign-up Verification API - Verify Email",
+                subject: "Vérification de votre adresse email",
                 html: $@"<h4>Verifier votre adresse Email</h4>
                          <p>Merci de votre inscription!</p>
                          {message}"

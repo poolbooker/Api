@@ -12,8 +12,7 @@ namespace Pb.Api.Models.Accounts
         public string LastName { get; set; }
 
         [Required]
-        [EnumDataType(typeof(Role))]
-        public string Role { get; set; }
+        public Role Role { get; set; }
 
         [Required]
         [EmailAddress]
@@ -31,7 +30,6 @@ namespace Pb.Api.Models.Accounts
         public string ConfirmPassword { get; set; }
 
         [Required]
-        [EnumDataType(typeof(CustomerType))]
-        public string CustomerType { get; set; }
+        public CustomerType CustomerType { get; set; }
     }
 }

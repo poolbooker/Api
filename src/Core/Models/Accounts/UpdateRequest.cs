@@ -13,8 +13,7 @@ namespace Pb.Api.Models.Accounts
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-        [EnumDataType(typeof(Role))]
-        public int RoleId { get; set; }
+        public Role? Role { get; set; }
 
         [EmailAddress]
         public string Email
@@ -43,8 +42,7 @@ namespace Pb.Api.Models.Accounts
             set => _confirmPassword = ReplaceEmptyWithNull(value);
         }
 
-        [EnumDataType(typeof(CustomerType))]
-        public int CustomerType { get; set; }
+        public CustomerType CustomerType { get; set; }
 
         private string ReplaceEmptyWithNull(string value)
         {

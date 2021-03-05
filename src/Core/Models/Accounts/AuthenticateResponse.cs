@@ -1,3 +1,4 @@
+using Pb.Api.Entities;
 using System;
 using System.Text.Json.Serialization;
 
@@ -10,8 +11,8 @@ namespace Pb.Api.Models.Accounts
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public int CustomerTypeId { get; set; }
-        public int RoleId { get; set; }
+        public CustomerType CustomerType { get; set; }
+        public Role Role { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Updated { get; set; }
         public bool IsVerified { get; set; }

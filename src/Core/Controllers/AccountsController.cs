@@ -27,8 +27,8 @@ namespace Pb.Api.Controllers
         [HttpPost("authenticate")]
         public ActionResult<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
-            var response = _accountService.Authenticate(model, ipAddress());
-            setTokenCookie(response.RefreshToken);
+            var response = _accountService.Authenticate(model, IpAddress);
+            SetTokenCookie(response.RefreshToken);
             return Ok(response);
         }
 
@@ -36,8 +36,8 @@ namespace Pb.Api.Controllers
         public ActionResult<AuthenticateResponse> RefreshToken()
         {
             var refreshToken = Request.Cookies["refreshToken"];
-            var response = _accountService.RefreshToken(refreshToken, ipAddress());
-            setTokenCookie(response.RefreshToken);
+            var response = _accountService.RefreshToken(refreshToken, IpAddress);
+            SetTokenCookie(response.RefreshToken);
             return Ok(response);
         }
 
@@ -45,17 +45,17 @@ namespace Pb.Api.Controllers
         [HttpPost("revoke-token")]
         public IActionResult RevokeToken(RevokeTokenRequest model)
         {
-            // accept token from request body or cookie
+            // Accept token from request body or cookie
             var token = model.Token ?? Request.Cookies["refreshToken"];
 
             if (string.IsNullOrEmpty(token))
                 return BadRequest(new { message = "Token is required" });
 
-            // users can revoke their own tokens and admins can revoke any tokens
+            // Users can revoke their own tokens and admins can revoke any tokens
             if (!Account.OwnsToken(token) && Account.Role != Role.Admin)
                 return Unauthorized(new { message = "Unauthorized" });
 
-            _accountService.RevokeToken(token, ipAddress());
+            _accountService.RevokeToken(token, IpAddress);
             return Ok(new { message = "Token revoked" });
         }
 
@@ -106,7 +106,7 @@ namespace Pb.Api.Controllers
         [HttpGet("{id:int}")]
         public ActionResult<AccountResponse> GetById(int id)
         {
-            // users can get their own account and admins can get any account
+            // Users can get their own account and admins can get any account
             if (id != Account.Id && Account.Role != Role.Admin)
                 return Unauthorized(new { message = "Unauthorized" });
 
@@ -126,13 +126,13 @@ namespace Pb.Api.Controllers
         [HttpPut("{id:int}")]
         public ActionResult<AccountResponse> Update(int id, UpdateRequest model)
         {
-            // users can update their own account and admins can update any account
+            // Users can update their own account and admins can update any account
             if (id != Account.Id && Account.Role != Role.Admin)
                 return Unauthorized(new { message = "Unauthorized" });
 
-            // only admins can update role
-            //if (Account.Role != Role.Admin)
-            //    model.Role = null;
+            // Only admins can update role
+            if (Account.Role != Role.Admin)
+                model.Role = null;
 
             var account = _accountService.Update(id, model);
             return Ok(account);
@@ -142,7 +142,7 @@ namespace Pb.Api.Controllers
         [HttpDelete("{id:int}")]
         public IActionResult Delete(int id)
         {
-            // users can delete their own account and admins can delete any account
+            // Users can delete their own account and admins can delete any account
             if (id != Account.Id && Account.Role != Role.Admin)
                 return Unauthorized(new { message = "Unauthorized" });
 
@@ -150,9 +150,7 @@ namespace Pb.Api.Controllers
             return Ok(new { message = "Account deleted successfully" });
         }
 
-        // helper methods
-
-        private void setTokenCookie(string token)
+        private void SetTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions
             {
@@ -162,12 +160,6 @@ namespace Pb.Api.Controllers
             Response.Cookies.Append("refreshToken", token, cookieOptions);
         }
 
-        private string ipAddress()
-        {
-            if (Request.Headers.ContainsKey("X-Forwarded-For"))
-                return Request.Headers["X-Forwarded-For"];
-            else
-                return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-        }
+        private string IpAddress => Request.Headers.ContainsKey("X-Forwarded-For") ? Request.Headers["X-Forwarded-For"] : HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
     }
 }
