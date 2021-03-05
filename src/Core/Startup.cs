@@ -40,7 +40,7 @@ namespace Pb.Api
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, PoolBookerDbContext context)
         {
             app.UseSwagger();
-            app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "ASP.NET Core Sign-up and Verification API"));
+            app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "PoolBooker API"));
 
             app.UseHttpsRedirection();
             app.UseRouting();
