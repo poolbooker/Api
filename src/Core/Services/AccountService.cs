@@ -12,6 +12,7 @@ using Pb.Api.Entities;
 using Pb.Api.Helpers;
 using Pb.Api.Models.Accounts;
 using AutoMapper;
+using System.IO;
 
 namespace Pb.Api.Services
 {
@@ -322,9 +323,16 @@ namespace Pb.Api.Services
             string message;
             if (!string.IsNullOrEmpty(origin))
             {
-                var verifyUrl = $"{origin}/account/verify-email?token={account.VerificationToken}";
-                message = $@"<p>Merci de cliquer sur le lien ci-dessous pour valider votre adresse email :</p>
-                             <p><a href=""{verifyUrl}"">{verifyUrl}</a></p>";
+                var verifyUrl = $"{origin}/accounts/verify-email?token={account.VerificationToken}";
+                var resourcesFolder = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "Resources");
+                using (var reader = new StreamReader(Path.Combine(resourcesFolder, "VerificationEmail.html")))
+                {
+                    message = reader.ReadToEnd()
+                        .Replace("{User}", account.FirstName)
+                        .Replace("{BannerImageSrc}", Path.Combine(resourcesFolder, "LogoBanner.png"))
+                        .Replace("{VerificationUrl}", verifyUrl)
+                        .Replace("{SecurityUrl}", "https://www.poolbooker.com/securite");
+                }
             }
             else
             {
@@ -335,9 +343,10 @@ namespace Pb.Api.Services
             _emailService.Send(
                 to: account.Email,
                 subject: "Vérification de votre adresse email",
-                html: $@"<h4>Verifier votre adresse Email</h4>
-                         <p>Merci de votre inscription!</p>
-                         {message}"
+                //html: $@"<h4>Verifiez votre adresse Email</h4>
+                //         <p>Merci de votre inscription!</p>
+                //         {message}",
+                html: $@"{message}"
             );
         }
 
@@ -346,7 +355,7 @@ namespace Pb.Api.Services
             string message;
             if (!string.IsNullOrEmpty(origin))
             {
-                var resetUrl = $"{origin}/account/reset-password?token={account.ResetToken}";
+                var resetUrl = $"{origin}/accounts/reset-password?token={account.ResetToken}";
                 message = $@"<p>Please click the below link to reset your password, the link will be valid for 1 day:</p>
                              <p><a href=""{resetUrl}"">{resetUrl}</a></p>";
             }

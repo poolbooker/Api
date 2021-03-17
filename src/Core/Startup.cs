@@ -23,8 +23,8 @@ namespace Pb.Api
         {
             services.AddDbContext<PoolBookerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("PoolBookerDbConnectionString")));
             //services.AddCors();
-            //services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.IgnoreNullValues = true);
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.IgnoreNullValues = true);
+            //services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen();
 
