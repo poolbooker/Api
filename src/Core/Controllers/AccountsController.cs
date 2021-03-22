@@ -66,10 +66,10 @@ namespace Pb.Api.Controllers
             return Ok(new { message = "Registration successful, please check your email for verification instructions", status = registred ? "Added" : "AlreadyRegistred" });
         }
 
-        [HttpPost("verify-email")]
-        public IActionResult VerifyEmail(VerifyEmailRequest model)
+        [HttpGet("verify-email")]
+        public IActionResult VerifyEmail(string token)
         {
-            _accountService.VerifyEmail(model.Token);
+            _accountService.VerifyEmail(token);
             return Ok(new { message = "Verification successful, you can now login" });
         }
 
