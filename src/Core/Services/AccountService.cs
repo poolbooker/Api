@@ -323,8 +323,7 @@ namespace Pb.Api.Services
             string message;
             if (!string.IsNullOrEmpty(origin))
             {
-                var resourcesFolder = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "Resources");
-                using (var reader = new StreamReader(Path.Combine(resourcesFolder, "VerificationEmail.html")))
+                using (var reader = new StreamReader(Path.Combine(Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "Templates"), "VerificationEmail.html")))
                 {
                     message = reader.ReadToEnd()
                         .Replace("{User}", account.FirstName)

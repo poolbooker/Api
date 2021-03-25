@@ -23,7 +23,7 @@
     <None Update="Resources\LogoBanner.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\VerificationEmail.html">
+    <None Update="Templates\VerificationEmail.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
