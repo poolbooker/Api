@@ -323,14 +323,13 @@ namespace Pb.Api.Services
             string message;
             if (!string.IsNullOrEmpty(origin))
             {
-                var verifyUrl = $"{origin}/accounts/verify-email?token={account.VerificationToken}";
                 var resourcesFolder = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "Resources");
                 using (var reader = new StreamReader(Path.Combine(resourcesFolder, "VerificationEmail.html")))
                 {
                     message = reader.ReadToEnd()
                         .Replace("{User}", account.FirstName)
-                        .Replace("{BannerImageSrc}", Path.Combine(resourcesFolder, "LogoBanner.png"))
-                        .Replace("{VerificationUrl}", verifyUrl)
+                        .Replace("{BannerImageSrc}", $"{origin}/app-images/LogoBanner.png")
+                        .Replace("{VerificationUrl}", $"{origin}/accounts/verify-email?token={account.VerificationToken}")
                         .Replace("{SecurityUrl}", "https://www.poolbooker.com/securite");
                 }
             }

@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Pb.Api.Helpers;
 using Pb.Api.Middleware;
 using Pb.Api.Services;
 using System;
+using System.IO;
 
 namespace Pb.Api
 {
@@ -61,6 +64,13 @@ namespace Pb.Api
             app.UseAuthorization();
 
             app.UseEndpoints(x => x.MapControllers());
+
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+                            Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
+                RequestPath = new PathString("/app-images")
+            });
         }
     }
 }
