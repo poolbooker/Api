@@ -134,7 +134,7 @@ namespace Pb.Api.Services
             _context.SaveChanges();
 
             // Send verification email
-            SendVerificationEmail(account, target);
+            SendVerificationEmail(account, $"https://{target}");
             return true;
         }
 
