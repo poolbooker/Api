@@ -21,7 +21,7 @@ namespace Pb.Api.Services
         AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
         AuthenticateResponse RefreshToken(string token, string ipAddress);
         void RevokeToken(string token, string ipAddress);
-        bool Register(RegisterRequest model, string origin);
+        bool Register(RegisterRequest model, string target);
         void VerifyEmail(string token);
         void ForgotPassword(ForgotPasswordRequest model, string origin);
         void ValidateResetToken(ValidateResetTokenRequest model);
@@ -113,7 +113,7 @@ namespace Pb.Api.Services
             _context.SaveChanges();
         }
 
-        public bool Register(RegisterRequest model, string origin)
+        public bool Register(RegisterRequest model, string target)
         {
             if (_context.Accounts.Any(x => x.Email == model.Email))
                 return false;
@@ -134,7 +134,7 @@ namespace Pb.Api.Services
             _context.SaveChanges();
 
             // Send verification email
-            SendVerificationEmail(account, origin);
+            SendVerificationEmail(account, target);
             return true;
         }
 
@@ -318,17 +318,17 @@ namespace Pb.Api.Services
             return BitConverter.ToString(randomBytes).Replace("-", "");
         }
 
-        private void SendVerificationEmail(Account account, string origin)
+        private void SendVerificationEmail(Account account, string target)
         {
             string message;
-            if (!string.IsNullOrEmpty(origin))
+            if (!string.IsNullOrEmpty(target))
             {
                 using (var reader = new StreamReader(Path.Combine(Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "Templates"), "VerificationEmail.html")))
                 {
                     message = reader.ReadToEnd()
                         .Replace("{User}", account.FirstName)
-                        .Replace("{BannerImageSrc}", $"{origin}/app-images/LogoBanner.png")
-                        .Replace("{VerificationUrl}", $"{origin}/accounts/verify-email?token={account.VerificationToken}")
+                        .Replace("{BannerImageSrc}", $"{target}/app-images/LogoBanner.png")
+                        .Replace("{VerificationUrl}", $"{target}/accounts/verify-email?token={account.VerificationToken}")
                         .Replace("{SecurityUrl}", "https://www.poolbooker.com/securite");
                 }
             }

@@ -62,7 +62,7 @@ namespace Pb.Api.Controllers
         [HttpPost("register")]
         public IActionResult Register(RegisterRequest model)
         {
-            var registred = _accountService.Register(model, Request.Headers["origin"]);
+            var registred = _accountService.Register(model, Request.Headers["host"]);
             return Ok(new { message = "Registration successful, please check your email for verification instructions", status = registred ? "Added" : "AlreadyRegistred" });
         }
 
