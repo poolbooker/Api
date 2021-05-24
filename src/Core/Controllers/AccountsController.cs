@@ -63,35 +63,35 @@ namespace Pb.Api.Controllers
         public IActionResult Register(RegisterRequest model)
         {
             var registred = _accountService.Register(model, Request.Headers["host"]);
-            return Ok(new { message = "Registration successful, please check your email for verification instructions", status = registred ? "Added" : "AlreadyRegistred" });
+            return Ok(new { message = "Inscription réussie. Merci de vérifier votre compte en suivant le lien reçu par email.", status = registred ? "Added" : "AlreadyRegistred" });
         }
 
         [HttpGet("verify-email")]
         public IActionResult VerifyEmail(string token)
         {
             _accountService.VerifyEmail(token);
-            return Ok(new { message = "Verification successful, you can now login" });
+            return Ok(new { message = "Verification réussie. Vous pouvez vous connecter dès à présent." });
         }
 
         [HttpPost("forgot-password")]
         public IActionResult ForgotPassword(ForgotPasswordRequest model)
         {
-            _accountService.ForgotPassword(model, Request.Headers["origin"]);
-            return Ok(new { message = "Please check your email for password reset instructions" });
+            _accountService.ForgotPassword(model, Request.Headers["host"]);
+            return Ok(new { message = "Merci de suivre les instructions reçues par email pour créer un nouveau mot de passe." });
         }
 
         [HttpPost("validate-reset-token")]
         public IActionResult ValidateResetToken(ValidateResetTokenRequest model)
         {
             _accountService.ValidateResetToken(model);
-            return Ok(new { message = "Token is valid" });
+            return Ok(new { message = "Le Token est valide." });
         }
 
-        [HttpPost("reset-password")]
-        public IActionResult ResetPassword(ResetPasswordRequest model)
+        [HttpGet("reset-password")]
+        public IActionResult ResetPassword(string token, string password, string confirmPassword)
         {
-            _accountService.ResetPassword(model);
-            return Ok(new { message = "Password reset successful, you can now login" });
+            _accountService.ResetPassword(token, password, confirmPassword);
+            return Ok(new { message = "Votre mot de passe a été mis à jour. Vous pouvez vous connecter dès à présent." });
         }
 
         [Authorize(Role.Admin)]

@@ -23,9 +23,9 @@ namespace Pb.Api.Services
         void RevokeToken(string token, string ipAddress);
         bool Register(RegisterRequest model, string target);
         void VerifyEmail(string token);
-        void ForgotPassword(ForgotPasswordRequest model, string origin);
+        void ForgotPassword(ForgotPasswordRequest model, string target);
         void ValidateResetToken(ValidateResetTokenRequest model);
-        void ResetPassword(ResetPasswordRequest model);
+        void ResetPassword(string token, string password, string confirmPassword);
         IEnumerable<AccountResponse> GetAll();
         AccountResponse GetById(int id);
         AccountResponse Create(CreateRequest model);
@@ -151,7 +151,7 @@ namespace Pb.Api.Services
             _context.SaveChanges();
         }
 
-        public void ForgotPassword(ForgotPasswordRequest model, string origin)
+        public void ForgotPassword(ForgotPasswordRequest model, string target)
         {
             var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
 
@@ -167,7 +167,7 @@ namespace Pb.Api.Services
             _context.SaveChanges();
 
             // Send email
-            SendPasswordResetEmail(account, origin);
+            SendPasswordResetEmail(account, $"https://{target}");
         }
 
         public void ValidateResetToken(ValidateResetTokenRequest model)
@@ -180,17 +180,17 @@ namespace Pb.Api.Services
                 throw new AppException("Invalid token");
         }
 
-        public void ResetPassword(ResetPasswordRequest model)
+        public void ResetPassword(string token, string password, string confirmPassword)
         {
             var account = _context.Accounts.SingleOrDefault(x =>
-                x.ResetToken == model.Token &&
+                x.ResetToken == token &&
                 x.ResetTokenExpires > DateTime.UtcNow);
 
             if (account == null)
                 throw new AppException("Invalid token");
 
             // Update password and remove reset token
-            account.PwdHash = BC.HashPassword(model.Password);
+            account.PwdHash = BC.HashPassword(password);
             account.PwdReset = DateTime.UtcNow;
             account.ResetToken = null;
             account.ResetTokenExpires = null;
@@ -348,12 +348,12 @@ namespace Pb.Api.Services
             );
         }
 
-        private void SendPasswordResetEmail(Account account, string origin)
+        private void SendPasswordResetEmail(Account account, string target)
         {
             string message;
-            if (!string.IsNullOrEmpty(origin))
+            if (!string.IsNullOrEmpty(target))
             {
-                var resetUrl = $"{origin}/accounts/reset-password?token={account.ResetToken}";
+                var resetUrl = $"{target}/reset-password?token={account.ResetToken}&password=toto";
                 message = $@"<p>Please click the below link to reset your password, the link will be valid for 1 day:</p>
                              <p><a href=""{resetUrl}"">{resetUrl}</a></p>";
             }
