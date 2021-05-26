@@ -19,7 +19,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
     public void OnAuthorization(AuthorizationFilterContext context)
     {
         var account = (Account)context.HttpContext.Items["Account"];
-        if (account == null || (_roles.Any() && !_roles.Contains(account.Role)))
+        if (account == null || (_roles.Any() && !_roles.Contains(account.RoleId)))
         {
             // not logged in or role not authorized
             context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };

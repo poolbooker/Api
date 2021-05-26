@@ -27,9 +27,29 @@ namespace Pb.Api.Models.Accounts
         public string ConfirmPassword { get; set; }
 
         [Required]
-        public CustomerType CustomerType { get; set; }
+        public CustomerType CustomerTypeId { get; set; }
 
-        [Range(typeof(bool), "true", "true")]
-        public bool AcceptTerms { get; set; }
+        public int HouseNumber { get; set; }
+
+        public AddressRepetitionIndex? AddressRepetitionIndexId { get; set; }
+
+        [Required]
+        public string Street { get; set; }
+
+        public string StreetComplement { get; set; }
+
+        [Required]
+        [StringLength(5)]
+        public string ZipCode { get; set; }
+
+        [Required]
+        public int CountryId { get; set; }
+
+        public byte[] IdCard { get; set; }
+
+        public byte[] ProofOfAddress { get; set; }
+
+        [MaxLength(34)]
+        public string Iban { get; set; }
     }
 }

@@ -52,7 +52,7 @@ namespace Pb.Api.Controllers
                 return BadRequest(new { message = "Token is required" });
 
             // Users can revoke their own tokens and admins can revoke any tokens
-            if (!Account.OwnsToken(token) && Account.Role != Role.Admin)
+            if (!Account.OwnsToken(token) && Account.RoleId != Role.Admin)
                 return Unauthorized(new { message = "Unauthorized" });
 
             _accountService.RevokeToken(token, IpAddress);
@@ -107,7 +107,7 @@ namespace Pb.Api.Controllers
         public ActionResult<AccountResponse> GetById(int id)
         {
             // Users can get their own account and admins can get any account
-            if (id != Account.Id && Account.Role != Role.Admin)
+            if (id != Account.Id && Account.RoleId != Role.Admin)
                 return Unauthorized(new { message = "Unauthorized" });
 
             var account = _accountService.GetById(id);
@@ -127,11 +127,11 @@ namespace Pb.Api.Controllers
         public ActionResult<AccountResponse> Update(int id, UpdateRequest model)
         {
             // Users can update their own account and admins can update any account
-            if (id != Account.Id && Account.Role != Role.Admin)
+            if (id != Account.Id && Account.RoleId != Role.Admin)
                 return Unauthorized(new { message = "Unauthorized" });
 
             // Only admins can update role
-            if (Account.Role != Role.Admin)
+            if (Account.RoleId != Role.Admin)
                 model.Role = null;
 
             var account = _accountService.Update(id, model);
@@ -143,7 +143,7 @@ namespace Pb.Api.Controllers
         public IActionResult Delete(int id)
         {
             // Users can delete their own account and admins can delete any account
-            if (id != Account.Id && Account.Role != Role.Admin)
+            if (id != Account.Id && Account.RoleId != Role.Admin)
                 return Unauthorized(new { message = "Unauthorized" });
 
             _accountService.Delete(id);

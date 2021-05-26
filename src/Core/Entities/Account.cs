@@ -19,10 +19,10 @@ namespace Pb.Api.Entities
         public string PwdHash { get; set; }
 
         [Column("CustomerTypeId")]
-        public CustomerType CustomerType { get; set; }
+        public CustomerType CustomerTypeId { get; set; }
 
         [Column("RoleId")]
-        public Role Role { get; set; }
+        public Role RoleId { get; set; }
 
         public string VerificationToken { get; set; }
 
@@ -36,7 +36,23 @@ namespace Pb.Api.Entities
 
         public DateTime? PwdReset { get; set; }
 
-        public bool AcceptTerms { get; set; }
+        public int HouseNumber { get; set; }
+
+        public AddressRepetitionIndex AddressRepetitionIndexId { get; set; }
+
+        public string Street { get; set; }
+
+        public string StreetComplement { get; set; }
+
+        public string ZipCode { get; set; }
+
+        public int CountryId { get; set; }
+
+        public byte[] IdCard { get; set; }
+
+        public byte[] ProofOfAddress { get; set; }
+
+        public string Iban { get; set; }
 
         public DateTime Created { get; set; }
 
