@@ -11,6 +11,7 @@ namespace Pb.Api.Models.Accounts
         private string _phone;
 
         public string FirstName { get; set; }
+
         public string LastName { get; set; }
 
         public Role? Role { get; set; }
@@ -36,13 +37,31 @@ namespace Pb.Api.Models.Accounts
         }
 
         [Compare("Password")]
-        public string ConfirmPassword 
+        public string ConfirmPassword
         {
             get => _confirmPassword;
             set => _confirmPassword = ReplaceEmptyWithNull(value);
         }
 
         public CustomerType CustomerType { get; set; }
+
+        public int HouseNumber { get; set; }
+
+        public AddressRepetitionIndex AddressRepetitionIndexId { get; set; }
+
+        public string Street { get; set; }
+
+        public string StreetComplement { get; set; }
+
+        public string ZipCode { get; set; }
+
+        public string CountryIsoCode { get; set; }
+
+        public byte[] IdCard { get; set; }
+
+        public byte[] ProofOfAddress { get; set; }
+
+        public string Iban { get; set; }
 
         private string ReplaceEmptyWithNull(string value)
         {

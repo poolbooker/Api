@@ -1,6 +1,5 @@
 using AutoMapper;
 using Pb.Api.Entities;
-using Pb.Api.Models.Accounts;
 
 namespace Pb.Api.Helpers
 {
@@ -8,15 +7,15 @@ namespace Pb.Api.Helpers
     {
         public AutoMapperProfile()
         {
-            CreateMap<Account, AccountResponse>();
+            CreateMap<Account, Models.Accounts.AccountResponse>();
 
-            CreateMap<Account, AuthenticateResponse>();
+            CreateMap<Account, Models.Accounts.AuthenticateResponse>();
 
-            CreateMap<RegisterRequest, Account>();
+            CreateMap<Models.Accounts.RegisterRequest, Account>();
 
-            CreateMap<CreateRequest, Account>();
+            CreateMap<Models.Accounts.CreateRequest, Account>();
 
-            CreateMap<UpdateRequest, Account>()
+            CreateMap<Models.Accounts.UpdateRequest, Account>()
                 .ForAllMembers(x => x.Condition(
                     (src, dest, prop) =>
                     {
@@ -30,6 +29,22 @@ namespace Pb.Api.Helpers
                         return true;
                     }
                 ));
+
+            //CreateMap<Announcement, Models.Announcements.AnnouncementResponse>();
+
+            //CreateMap<Models.Announcements.CreateRequest, Announcement>();
+
+            //CreateMap<Models.Announcements.UpdateRequest, Announcement>()
+            //    .ForAllMembers(x => x.Condition(
+            //        (src, dest, prop) =>
+            //        {
+            //            // ignore null & empty string properties
+            //            if (prop == null) return false;
+            //            if (prop.GetType() == typeof(string) && string.IsNullOrEmpty((string)prop)) return false;
+
+            //            return true;
+            //        }
+            //    ));
         }
     }
 }

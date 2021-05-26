@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using Pb.Api.Entities;
 using Pb.Api.Models.Accounts;
-using Pb.Api.Services;
 using AutoMapper;
+using Pb.Api.Interfaces;
 
 namespace Pb.Api.Controllers
 {

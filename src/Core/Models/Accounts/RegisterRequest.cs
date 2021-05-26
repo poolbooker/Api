@@ -31,7 +31,7 @@ namespace Pb.Api.Models.Accounts
 
         public int HouseNumber { get; set; }
 
-        public AddressRepetitionIndex? AddressRepetitionIndexId { get; set; }
+        public AddressRepetitionIndex AddressRepetitionIndexId { get; set; }
 
         [Required]
         public string Street { get; set; }
@@ -43,7 +43,7 @@ namespace Pb.Api.Models.Accounts
         public string ZipCode { get; set; }
 
         [Required]
-        public int CountryId { get; set; }
+        public string CountryIsoCode { get; set; }
 
         public byte[] IdCard { get; set; }
 

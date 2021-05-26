@@ -13,26 +13,10 @@ using Pb.Api.Helpers;
 using Pb.Api.Models.Accounts;
 using AutoMapper;
 using System.IO;
+using Pb.Api.Interfaces;
 
 namespace Pb.Api.Services
 {
-    public interface IAccountService
-    {
-        AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
-        AuthenticateResponse RefreshToken(string token, string ipAddress);
-        void RevokeToken(string token, string ipAddress);
-        bool Register(RegisterRequest model, string target);
-        void VerifyEmail(string token);
-        void ForgotPassword(ForgotPasswordRequest model, string target);
-        void ValidateResetToken(ValidateResetTokenRequest model);
-        void ResetPassword(string token, string password, string confirmPassword);
-        IEnumerable<AccountResponse> GetAll();
-        AccountResponse GetById(int id);
-        AccountResponse Create(CreateRequest model);
-        AccountResponse Update(int id, UpdateRequest model);
-        void Delete(int id);
-    }
-
     public class AccountService : IAccountService
     {
         private readonly PoolBookerDbContext _context;
@@ -123,6 +107,7 @@ namespace Pb.Api.Services
             // First registered account is an admin
             var isFirstAccount = _context.Accounts.Count() == 0;
             account.RoleId = isFirstAccount ? Role.Admin : Role.User;
+            account.CountryId = _context.Countries.First(c => c.IsoCode == model.CountryIsoCode).Id;
             account.Created = DateTime.UtcNow;
             account.VerificationToken = RandomTokenString();
 

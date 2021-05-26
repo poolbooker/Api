@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Pb.Api.Helpers;
+using Pb.Api.Interfaces;
 using Pb.Api.Middleware;
 using Pb.Api.Services;
 using System;
@@ -36,6 +37,7 @@ namespace Pb.Api
 
             // configure DI for application services
             services.AddScoped<IAccountService, AccountService>();
+            //services.AddScoped<IAnnouncementService, AnnouncementService>();
             services.AddScoped<IEmailService, EmailService>();
         }
 
