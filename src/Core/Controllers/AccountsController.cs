@@ -87,10 +87,10 @@ namespace Pb.Api.Controllers
             return Ok(new { message = "Le Token est valide." });
         }
 
-        [HttpGet("reset-password")]
-        public IActionResult ResetPassword(string token, string password, string confirmPassword)
+        [HttpPost("reset-password")]
+        public IActionResult ResetPassword(ResetPasswordRequest model)
         {
-            _accountService.ResetPassword(token, password, confirmPassword);
+            _accountService.ResetPassword(model.Token, model.Password, model.ConfirmPassword);
             return Ok(new { message = "Votre mot de passe a été mis à jour. Vous pouvez vous connecter dès à présent." });
         }
 
